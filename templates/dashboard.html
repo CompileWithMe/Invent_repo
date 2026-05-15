@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analytics Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGO -->
+    <div class="logo" style="text-align:center; margin-bottom:15px;">
+        <img src="{{ url_for('static', filename='images/logo2.jpeg') }}" alt="GoBaskit Logo" class="logo-img">
+    </div>
+
+    <!-- HEADER -->
+    <h1>📊 Analytics Dashboard</h1>
+
+    <a href="/">⬅ Back to Inventory</a>
+
+    <!-- SUMMARY CARDS -->
+    <div class="analytics-section">
+
+        <div class="chart-box">
+            <h3>📦 Stock Levels</h3>
+            <canvas id="stockChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h3>💰 Revenue by Category</h3>
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- FAST VS SLOW MOVING -->
+    <div class="chart-box" style="margin-top:20px;">
+        <h3>⚡ Fast vs Slow Moving Items</h3>
+        <canvas id="movementChart"></canvas>
+    </div>
+
+</div>
+
+<!-- =========================
+     CHART JS SCRIPT
+========================= -->
+
+<script>
+
+    // ================= STOCK CHART =================
+    const stockLabels = [
+        {% for p in products %}
+            "{{ p[0] }}",
+        {% endfor %}
+    ];
+
+    const stockData = [
+        {% for p in products %}
+            {{ p[1] }},
+        {% endfor %}
+    ];
+
+    new Chart(document.getElementById('stockChart'), {
+        type: 'bar',
+        data: {
+            labels: stockLabels,
+            datasets: [{
+                label: 'Stock Quantity',
+                data: stockData,
+                backgroundColor: '#3498db'
+            }]
+        }
+    });
+
+    // ================= REVENUE CHART =================
+    const revenueLabels = [
+        {% for r in revenue %}
+            "{{ r[0] }}",
+        {% endfor %}
+    ];
+
+    const revenueData = [
+        {% for r in revenue %}
+            {{ r[1] }},
+        {% endfor %}
+    ];
+
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'pie',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                data: revenueData,
+                backgroundColor: [
+                    '#ff6384',
+                    '#36a2eb',
+                    '#ffce56',
+                    '#2ecc71',
+                    '#9b59b6'
+                ]
+            }]
+        }
+    });
+
+    // ================= FAST vs SLOW MOVING =================
+    let fast = 0;
+    let slow = 0;
+
+    {% for p in products %}
+
+        {% if p[1] > 50 %}
+            fast++;
+        {% else %}
+            slow++;
+        {% endif %}
+
+    {% endfor %}
+
+    new Chart(document.getElementById('movementChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Fast Moving', 'Slow Moving'],
+            datasets: [{
+                data: [fast, slow],
+                backgroundColor: ['#2ecc71', '#e74c3c']
+            }]
+        }
+    });
+
+</script>
+
+</body>
+</html>

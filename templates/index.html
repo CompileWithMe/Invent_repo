@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoBaskit Inventory Management System</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo2.jpeg') }}" alt="GoBaskit Logo" class="logo-img">
+        </div>
+        <h1>GoBaskit</h1>
+
+        <div class="nav-buttons">
+            <a href="/add" class="btn">Add Product</a>
+            <a href="/dashboard" class="btn">Dashboard</a>
+            <a href="/contact" class="btn">Contact</a>
+        </div>
+    </div>
+
+    <!-- REAL-TIME STATUS -->
+    <div id="live-status" class="live-status">
+        Real-time Monitoring Active
+    </div>
+
+    <!-- ANALYTICS SECTION -->
+    <div class="analytics-section">
+
+        <div class="chart-box">
+            <h2>Stock Quantity Analytics</h2>
+            <canvas id="stockChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Revenue Analytics</h2>
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- PRODUCT TABLE -->
+    <div class="table-section">
+
+        <h2>Product Inventory</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for product in products %}
+            <tr>
+                <td data-label="ID">{{ product[0] }}</td>
+                <td data-label="Name">{{ product[1] }}</td>
+                <td data-label="Category">{{ product[2] }}</td>
+                <td data-label="Quantity">{{ product[3] }}</td>
+                <td data-label="Price">₹{{ "%.2f"|format(product[4]) }}</td>
+                <td data-label="Status">
+                    {% if product[3] > 50 %}
+                        <span class="fast-moving">Fast Moving</span>
+                    {% elif product[3] > 10 %}
+                        <span class="medium-stock">Medium</span>
+                    {% else %}
+                        <span class="slow-moving">Slow Moving</span>
+                    {% endif %}
+                </td>
+                <td data-label="Actions">
+                    <a href="/edit/{{ product[0] }}" class="edit-btn">Edit</a>
+                    |
+                    <form action="/delete/{{ product[0] }}" method="POST" style="display:inline;">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Delete this product?')">Delete</button>
+                    </form>
+                    |
+                    <a href="/history/{{ product[0] }}" class="history-btn">History</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- CONTACT + FEEDBACK -->
+    <div class="feedback-section">
+
+        <h2>Contact & Feedback</h2>
+
+        <form action="/feedback" method="POST">
+            <label for="name">Name</label>
+            <input type="text" name="name" placeholder="Your Name" required>
+
+            <label for="email">Email</label>
+            <input type="email" name="email" placeholder="Your Email" required>
+
+            <label for="message">Feedback</label>
+            <textarea name="message" placeholder="Write your feedback here..." rows="5" required></textarea>
+
+            <button type="submit" class="btn">Send Feedback</button>
+        </form>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <h3>Connect With Us</h3>
+        <div class="social-links">
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/nakul-mishra-3a9279278?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a href="https://www.instagram.com/yesnakull?igsh=MTliZnZhM3Fmdzhjcw==" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+    </footer>
+
+</div>
+
+<!-- ========================= -->
+<!-- CHART.JS -->
+<!-- ========================= -->
+
+<script>
+    // Product Labels
+    const productLabels = [
+        {% for product in products %}
+            "{{ product[1] }}",
+        {% endfor %}
+    ];
+
+    // Product Quantities
+    const productQuantities = [
+        {% for product in products %}
+            {{ product[3] }},
+        {% endfor %}
+    ];
+
+    // Revenue Data
+    const revenueData = [
+        {% for product in products %}
+            {{ product[3] * product[4] }},
+        {% endfor %}
+    ];
+
+    // STOCK CHART
+    new Chart(document.getElementById('stockChart'), {
+        type: 'bar',
+        data: {
+            labels: productLabels,
+            datasets: [{
+                label: 'Stock Quantity',
+                data: productQuantities,
+                backgroundColor: productLabels.map(() => `hsl(${Math.random()*360}, 70%, 60%)`)
+            }]
+        }
+    });
+
+    // REVENUE CHART
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'pie',
+        data: {
+            labels: productLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: revenueData,
+                backgroundColor: productLabels.map(() => `hsl(${Math.random()*360}, 70%, 60%)`)
+            }]
+        }
+    });
+
+    // =========================
+    // REAL-TIME SOCKET.IO
+    // =========================
+
+    var socket = io();
+
+    socket.on('stock_update', function(data) {
+        document.getElementById('live-status').innerHTML =
+            "🔴 Live Update: " + data.message;
+
+        // Optional: Update table or charts dynamically instead of reloading
+        setTimeout(() => { location.reload(); }, 1500);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGO -->
+    <div class="logo" style="text-align:center; margin-bottom:15px;">
+        <img src="{{ url_for('static', filename='images/logo2.jpeg') }}" alt="GoBaskit Logo" class="logo-img">
+    </div>
+
+    <!-- HEADER -->
+    <h1>📩 Contact & Feedback</h1>
+
+    <a href="/">⬅ Back to Inventory</a>
+
+    <!-- CONTACT INFO -->
+    <div class="chart-box" style="margin-top:20px;">
+        <h3>📞 Get in Touch</h3>
+        <p><strong>Email:</strong> support@inventoryapp.com</p>
+        <p><strong>Phone:</strong> +91-98765-43210</p>
+        <p><strong>Location:</strong> India</p>
+    </div>
+
+    <!-- FEEDBACK FORM -->
+    <div class="chart-box" style="margin-top:20px;">
+        <h3>💬 Send Feedback</h3>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" rows="5" placeholder="Your Feedback..." required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+    <!-- SOCIAL LINKS -->
+    <div class="chart-box" style="margin-top:20px;">
+        <h3>🌐 Follow Us</h3>
+        <a href="https://github.com/" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank">LinkedIn</a>
+        <a href="https://twitter.com/" target="_blank">Twitter</a>
+    </div>
+
+</div>
+
+</body>
+</html>

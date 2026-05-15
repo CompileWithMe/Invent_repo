@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Product</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+
+        <!-- LOGO -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo2.jpeg') }}" 
+                 alt="GoBaskit Logo" 
+                 class="logo-img">
+        </div>
+
+        <h1>
+            <i class="fa-solid fa-plus"></i>
+            Add New Product
+        </h1>
+
+        <p>
+            Add products to your inventory management system
+        </p>
+
+    </div>
+
+    <!-- FORM SECTION -->
+    <div class="form-container">
+
+        <form method="POST" class="product-form">
+
+            <!-- PRODUCT NAME -->
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-box"></i>
+                    Product Name
+                </label>
+                <input type="text" name="name" placeholder="Enter product name" required>
+            </div>
+
+            <!-- CATEGORY -->
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-layer-group"></i>
+                    Category
+                </label>
+                <input type="text" name="category" placeholder="Enter category">
+            </div>
+
+            <!-- QUANTITY -->
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-cubes"></i>
+                    Quantity
+                </label>
+                <input type="number" name="quantity" placeholder="Enter stock quantity" min="0" required>
+            </div>
+
+            <!-- PRICE -->
+            <div class="form-group">
+                <label>
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    Price
+                </label>
+                <input type="number" step="0.01" name="price" placeholder="Enter product price" min="0" required>
+            </div>
+
+            <!-- STOCK STATUS PREVIEW -->
+            <div class="info-card">
+                <h3>
+                    <i class="fa-solid fa-circle-info"></i>
+                    Inventory Tips
+                </h3>
+                <ul>
+                    <li>Keep stock above 50 for fast-moving items</li>
+                    <li>Monitor low-stock products regularly</li>
+                    <li>Maintain accurate pricing for analytics</li>
+                    <li>Every update is stored in audit history</li>
+                </ul>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="button-group">
+                <button type="submit" class="add-btn">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Add Product
+                </button>
+
+                <a href="/" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to Inventory
+                </a>
+
+                <a href="/dashboard" class="dashboard-btn">
+                    <i class="fa-solid fa-chart-column"></i>
+                    Dashboard
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="summary-card">
+
+        <h2>
+            <i class="fa-solid fa-chart-pie"></i>
+            Inventory Features
+        </h2>
+
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="summary-label">Real-time Monitoring</span>
+                <span class="summary-value">Active</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Audit Logging</span>
+                <span class="summary-value">Enabled</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Analytics Dashboard</span>
+                <span class="summary-value">Available</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Database</span>
+                <span class="summary-value">SQLite</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            Inventory Management System | Smart Inventory Tracking Enabled
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
